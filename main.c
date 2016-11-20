@@ -9,7 +9,7 @@
 
 // CONFIG1
 #pragma config FOSC = INTOSC    // Oscillator Selection Bits (INTOSC oscillator; I/O function on CLKIN pin)
-#pragma config WDTE = OFF       // Watchdog Timer Enable (WDT disabled)
+#pragma config WDTE = ON        // Watchdog Timer Enable (WDT enabled)
 #pragma config PWRTE = OFF      // Power-up Timer Enable (PWRT disabled)
 #pragma config MCLRE = ON       // MCLR Pin Function Select (MCLR/VPP pin function is MCLR)
 #pragma config CP = OFF         // Flash Program Memory Code Protection (Program memory code protection is disabled)
@@ -19,7 +19,7 @@
 // CONFIG2
 #pragma config WRT = OFF        // Flash Memory Self-Write Protection (Write protection off)
 #pragma config PPS1WAY = ON     // PPSLOCK bit One-Way Set Enable bit (PPSLOCKED Bit Can Be Cleared & Set Once)
-#pragma config PLLEN = ON       // PLL Enable (4x PLL enabled)
+#pragma config PLLEN = OFF      // PLL Enable (4x PLL disabled)
 #pragma config STVREN = ON      // Stack Overflow/Underflow Reset Enable (Stack Overflow or Underflow will cause a Reset)
 #pragma config BORV = LO        // Brown-out Reset Voltage Selection (Brown-out Reset Voltage (Vbor), low trip point selected.)
 #pragma config LPBOREN = OFF    // Low Power Brown-out Reset enable bit (LPBOR is disabled)
@@ -28,6 +28,27 @@
 // #pragma config statements should precede project file includes.
 // Use project enums instead of #define for ON and OFF.
 
+#define _XTAL_FREQ 1000000 
+// just for compiler. To change the osc speed, change OSCCON register
+
 void main(void) {
+    // default setup: internal low freq, 
+    
+    OSCCON = 0b01011000;  // SPLLEN = 0, IRCF = 1 MHz, SCS = 0 -> 1MHz setting
+    WDTCON = 0b00011000;  // 4s interval for watchdog timer
+    CLRWDT();
+    TRISCbits.TRISC3 = 0;
+    while(1)
+    {
+        PORTCbits.RC3 = 1;
+        __delay_ms(50);
+        PORTCbits.RC3 = 0;
+        __delay_ms(10);
+        SLEEP();
+        
+        // sleep
+    
+        // wakeup
+    }
     return;
 }
